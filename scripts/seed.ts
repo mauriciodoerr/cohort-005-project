@@ -11,6 +11,7 @@ import {
   CourseStatus,
   LessonProgressStatus,
   QuestionType,
+  RefundStatus,
   TeamMemberRole,
 } from "../app/db/schema";
 
@@ -2723,13 +2724,13 @@ This course is still in draft while the cluster examples are rewritten against t
     []
   );
 
-  // ─── Liam's Purchase ───
-  // One learner part-way through a recent purchase, with no request raised, so
-  // the course page offers "Cancel my purchase". The dates count back from
-  // today, so the fourteen-day refund window is still open whenever you seed.
+  // ─── Liam's Purchase and Refund ───
+  // One Learner part-way through a recent Purchase who has requested a Refund,
+  // so Settings shows "Refund requested". The dates count back from today, so
+  // the fourteen-day Refund Window is still open whenever you seed.
 
   const liam = studentByEmail("liam@example.com");
-  db
+  const liamPurchase = db
     .insert(schema.purchases)
     .values({
       userId: liam.id,
@@ -2738,7 +2739,8 @@ This course is still in draft while the cluster examples are rewritten against t
       country: null,
       createdAt: daysAgo(9),
     })
-    .run();
+    .returning()
+    .get();
   db.insert(schema.enrollments)
     .values({
       userId: liam.id,
@@ -2769,6 +2771,37 @@ This course is still in draft while the cluster examples are rewritten against t
       rating: 4,
       createdAt: daysAgo(6),
       updatedAt: daysAgo(6),
+    })
+    .run();
+  db.insert(schema.refunds)
+    .values({
+      purchaseId: liamPurchase.id,
+      status: RefundStatus.Requested,
+      reason:
+        "The course moves faster than I expected and I don't have time to keep up right now.",
+      requestedAt: daysAgo(2),
+    })
+    .run();
+
+  // ─── Sophia's Purchase ───
+  // A recent Purchase with no Refund and almost nothing watched, so the course
+  // page offers "Request a refund" whenever you seed.
+
+  const sophia = studentByEmail("sophia.davis@student.dev");
+  db.insert(schema.purchases)
+    .values({
+      userId: sophia.id,
+      courseId: course2.id,
+      amountPaid: 5999,
+      country: null,
+      createdAt: daysAgo(3),
+    })
+    .run();
+  db.insert(schema.enrollments)
+    .values({
+      userId: sophia.id,
+      courseId: course2.id,
+      enrolledAt: daysAgo(3),
     })
     .run();
 
