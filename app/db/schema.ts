@@ -9,10 +9,18 @@ import {
 } from "drizzle-orm/sqlite-core";
 
 export enum UserRole {
-  Student = "student",
+  // Stored as "student" so existing rows need no migration. Show it to people
+  // through USER_ROLE_LABELS, never raw. See docs/adr/0001.
+  Learner = "student",
   Instructor = "instructor",
   Admin = "admin",
 }
+
+export const USER_ROLE_LABELS: Record<UserRole, string> = {
+  [UserRole.Learner]: "Learner",
+  [UserRole.Instructor]: "Instructor",
+  [UserRole.Admin]: "Admin",
+};
 
 export enum CourseStatus {
   Draft = "draft",
