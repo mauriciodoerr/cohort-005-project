@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Form, useLocation } from "react-router";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
-import type { UserRole } from "~/db/schema";
+import { UserRole, USER_ROLE_LABELS } from "~/db/schema";
 import { ChevronDown, ChevronUp, Globe } from "lucide-react";
 
 interface DevUser {
@@ -19,23 +19,23 @@ interface DevUIProps {
   countries: { code: string; name: string }[];
 }
 
-const roleBadgeColors: Record<string, string> = {
-  admin: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
-  instructor:
+const roleBadgeColors: Record<UserRole, string> = {
+  [UserRole.Admin]: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+  [UserRole.Instructor]:
     "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-  student:
+  [UserRole.Learner]:
     "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
 };
 
-function RoleBadge({ role }: { role: string }) {
+function RoleBadge({ role }: { role: UserRole }) {
   return (
     <span
       className={cn(
-        "inline-block rounded-full px-2 py-0.5 text-xs font-medium capitalize",
+        "inline-block rounded-full px-2 py-0.5 text-xs font-medium",
         roleBadgeColors[role] ?? "bg-muted text-muted-foreground"
       )}
     >
-      {role}
+      {USER_ROLE_LABELS[role]}
     </span>
   );
 }

@@ -1,7 +1,7 @@
 import { NavLink, Form } from "react-router";
 import { useState, useEffect } from "react";
 import { cn } from "~/lib/utils";
-import { UserRole } from "~/db/schema";
+import { UserRole, USER_ROLE_LABELS } from "~/db/schema";
 import { UserAvatar } from "~/components/user-avatar";
 import {
   BookOpen,
@@ -60,7 +60,7 @@ const navItems: NavItem[] = [
     label: "Dashboard",
     to: "/dashboard",
     icon: <LayoutDashboard className="size-4" />,
-    roles: [UserRole.Student],
+    roles: [UserRole.Learner],
   },
   {
     label: "My Courses",
@@ -231,8 +231,8 @@ export function Sidebar({
               <div className="truncate text-sm font-medium">
                 {currentUser.name}
               </div>
-              <div className="truncate text-xs capitalize text-sidebar-foreground/50">
-                {currentUser.role}
+              <div className="truncate text-xs text-sidebar-foreground/50">
+                {USER_ROLE_LABELS[currentUser.role]}
               </div>
             </div>
             <NavLink
